@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "common.c"
-#include "config.h"
+#include "../config.h"
 
 #define MAX_CONNECTIONS 3
 
