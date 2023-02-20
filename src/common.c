@@ -39,4 +39,19 @@ static int strfind(const char* string, char target, int start)
     return -1;
 }
 
+static char* strcut(char* string, int n)
+{
+    if (n > strlen(string)) { return NULL; }
+
+    char* result = malloc(n + 1);
+
+    for (int i = 0; i < n; i++)
+    {
+        result[i] = string[i];
+    }
+    result[n] = '\0';
+
+    return result;
+}
+
 #endif // COMMON_C

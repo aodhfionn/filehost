@@ -8,6 +8,11 @@ address_t create_address();
 int create_server_socket(address_t*);
 void term(int, const char*);
 
+void print_request(http_request_t request)
+{
+    printf("Method: %d\nVersion: %d\nResource: %s\n", request.method, request.version, request.resource);
+}
+
 int main(void)
 {
     int sfd;
@@ -54,13 +59,9 @@ int main(void)
 
         http_request_t request = http_parse_request(buffer);
 
-        // hash map needed for below implementation
+        print_request(request);
 
-        // switch(request.method)
-        // {
-        //     case "GET":
-        //         break;
-        // }
+        (*http_callback_table[request.method])(client, request);
 
         close(client);
     }
