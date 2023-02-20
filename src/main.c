@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "common.c"
 #include "../config.h"
 
@@ -27,18 +25,22 @@ int main(void)
         return -1;
     }
 
-    printf("Hosted on %s:%d\n", address.host, address.addr_in.sin_port);
+    printf("Hosted on %s:%d\n", host, port);
 
     char buffer[1024] = { 0 };
     int client;
 
     const char* message = "HTTP/1.0 200 OK\r\nServer: C10K\r\nConnection: Closed\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>Hello World</title></head><body><h1>Test Response</h1></body></html>";
 
+
+    // hashmap_t* map = hashmap_create();
+    // hashmap_set(map, "test key", 69);
+    
+    // // segmentation fault core dumped
+    // printf("%d\n", hashmap_get(map, "test key"));
+
     while (1)
     {
-        struct sockaddr addr;
-        socklen_t addrlen;
-
         if ((client = accept(sfd, &address.addr, &address.addrlen)) < 0)
         {
             term(sfd, "client accept failure");
@@ -47,6 +49,16 @@ int main(void)
 
         int bytes_read = recv(client, &buffer, 1024, 0);
         int bytes_sent = send(client, message, strlen(message), 0);
+
+        http_request_t request = parse_http_request(buffer);
+
+        // hash map needed for below implementation
+
+        // switch(request.method)
+        // {
+        //     case "GET":
+        //         break;
+        // }
 
         close(client);
     }
@@ -59,7 +71,7 @@ int main(void)
 address_t create_address(const char* host, int port, int family)
 {
     struct sockaddr_in address_in = {
-        .sin_port = htons(9002),
+        .sin_port = htons(port),
         .sin_family = family
     };
 

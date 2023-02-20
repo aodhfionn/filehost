@@ -1,12 +1,16 @@
 #ifndef COMMON_C
 #define COMMON_C
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
+#include "hashmap.h"
+#include "http.h"
 
 // new address_t type in order to be able to pack extra metadata with sockaddr_in
 typedef struct
