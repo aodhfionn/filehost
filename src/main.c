@@ -37,7 +37,9 @@ int main(void)
     // hashmap_set(map, "test key", 69);
     
     // // segmentation fault core dumped
-    // printf("%d\n", hashmap_get(map, "test key"));
+    // printf("%d\n", (int)hashmap_get(map, "test key"));
+
+    // int number = hashmap_get(map, "test key");
 
     while (1)
     {
@@ -50,7 +52,7 @@ int main(void)
         int bytes_read = recv(client, &buffer, 1024, 0);
         int bytes_sent = send(client, message, strlen(message), 0);
 
-        http_request_t request = parse_http_request(buffer);
+        http_request_t request = http_parse_request(buffer);
 
         // hash map needed for below implementation
 
