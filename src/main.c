@@ -11,6 +11,11 @@ void term(int, const char*);
 void print_request(http_request_t request)
 {
     printf("Method: %d\nVersion: %d\nResource: %s\n", request.method, request.version, request.resource);
+
+    for (int i = 0; i < 3; i++)
+    {
+        printf("Header: '%s': '%s'\n", request.headers[i].key, request.headers[i].value);
+    }
 }
 
 int main(void)

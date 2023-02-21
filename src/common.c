@@ -39,17 +39,17 @@ static int strfind(const char* string, char target, int start)
     return -1;
 }
 
-static char* strcut(char* string, int n)
+static char* strcut(char* string, int start, int end)
 {
-    if (n > strlen(string)) { return NULL; }
+    if (start < 0 || end > strlen(string)) { return NULL; }
 
-    char* result = malloc(n + 1);
+    char* result = malloc(end + 1);
 
-    for (int i = 0; i < n; i++)
+    for (int i = start; i < end; i++)
     {
-        result[i] = string[i];
+        result[i - start] = string[i];
     }
-    result[n] = '\0';
+    result[end] = '\0';
 
     return result;
 }
