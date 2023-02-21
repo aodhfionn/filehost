@@ -26,7 +26,7 @@ typedef struct
 {
     int method;
     int version;
-    const char* resource;
+    char* resource;
 
     http_header_t* headers;
 } http_request_t;

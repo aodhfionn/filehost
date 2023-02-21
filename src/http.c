@@ -68,7 +68,8 @@ http_request_t http_parse_request(char* string)
                 break;
             }
             case E_RESOURCE: {
-                request.resource = token_space;
+                request.resource = malloc(strlen(token_space) + 1);
+                strcpy(request.resource, token_space);
                 
                 break;
             }
@@ -120,7 +121,7 @@ http_request_t http_parse_request(char* string)
 
         token_nline = strtok(NULL, "\n\r");
     }
-
+    
     return request;
 }
 
