@@ -20,14 +20,25 @@ enum http_version
 
 typedef struct pair http_header_t;
 
+static const int request_buffer_size = 1024;
+
 typedef struct
 {
     int method;
     int version;
-    const char* resource;
+    char* resource;
 
     http_header_t* headers;
 } http_request_t;
+
+// typedef struct
+// {
+//     int version;
+//     int code;
+//     const char* message;
+
+//     http_header_t* headers;
+// } http_response_t;
 
 http_request_t http_parse_request(char* s);
 

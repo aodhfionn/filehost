@@ -1,15 +1,5 @@
 #include "http.h"
 
-enum expecting
-{
-    E_METHOD,
-    E_PATH,
-    E_VERSION,
-    E_NEWLINE,
-    E_HEADER_KEY,
-    E_HEADER_VALUE
-};
-
 static struct pair http_method_table[] =
 {
     { "GET",    HTTP_METHOD_GET    },
@@ -35,37 +25,63 @@ int get_value(struct pair table[], size_t size, char* key)
     return -1;
 }
 
+void allocate_header(http_request_t* request, int n_headers, http_header_t header)
+{
+    http_header_t* header_list = malloc((n_headers + 1) * sizeof(http_header_t));
+
+    for (int i = 0; i < n_headers; i++)
+    {
+        header_list[i] = request->headers[i];
+    }
+    header_list[n_headers] = header;
+
+    request->headers = header_list;
+}
+
+enum expecting
+{
+    E_METHOD,
+    E_RESOURCE,
+    E_VERSION
+};
+
 http_request_t http_parse_request(char* string)
 {
     http_request_t request;
 
     int expecting = E_METHOD;
+    int parse = 1, skip = 0;
 
-    char* token = strtok(string, " ");
+    char buffer[request_buffer_size];
 
-    while (token != NULL)
+    strcpy(buffer, string);  
+    char* token_space = strtok(buffer, " ");
+
+    while (parse && token_space != NULL)
     {
         switch (expecting)
         {
             case E_METHOD: {
                 size_t table_size = sizeof(http_method_table)/sizeof(struct pair);
-                request.method = get_value(http_method_table, table_size, token);
+                request.method = get_value(http_method_table, table_size, token_space);
 
                 break;
             }
-            case E_PATH: {
-                request.resource = token;
+            case E_RESOURCE: {
+                request.resource = malloc(strlen(token_space) + 1);
+                strcpy(request.resource, token_space);
                 
                 break;
             }
             case E_VERSION: {
                 // cut version into just HTTP/X.X
-                char* version = strcut(token, 8);
+                char* version = strcut(token_space, 0, 8);
 
                 size_t table_size = sizeof(http_version_table)/sizeof(struct pair);
                 request.version = get_value(http_version_table, table_size, version);
 
                 free(version);
+                parse = 0;
                 break;
             }
             default: {
@@ -74,9 +90,38 @@ http_request_t http_parse_request(char* string)
         }
 
         expecting++;
-        token = strtok(NULL, " ");
+        token_space = strtok(NULL, " ");
     }
 
+    strcpy(buffer, string);
+    char* token_nline = strtok(buffer, "\n\r");
+
+    int n_headers = 0;
+
+    parse = 1;
+    skip = 1;
+    while (parse && token_nline != NULL)
+    {
+        if (skip)
+        {
+            skip = 0;
+            token_nline = strtok(NULL, "\n\r");
+
+            continue;
+        }
+
+        http_header_t header;
+
+        int split = strchr(token_nline, ':') - token_nline;
+        header.key = strcut(token_nline, 0, split);
+        header.value = strcut(token_nline, split + 2, strlen(token_nline));
+
+        allocate_header(&request, n_headers, header);
+        n_headers++;
+
+        token_nline = strtok(NULL, "\n\r");
+    }
+    
     return request;
 }
 

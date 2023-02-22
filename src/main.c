@@ -1,8 +1,6 @@
 #include "common.c"
 #include "../config.h"
 
-#define MAX_CONNECTIONS 3
-
 // function declaration
 address_t create_address();
 int create_server_socket(address_t*);
@@ -10,7 +8,12 @@ void term(int, const char*);
 
 void print_request(http_request_t request)
 {
-    printf("Method: %d\nVersion: %d\nResource: %s\n", request.method, request.version, request.resource);
+    printf("Method: %d\nVersion: %d\nResource: '%s'\n", request.method, request.version, request.resource);
+
+    for (int i = 0; i < 3; i++)
+    {
+        printf("Header: '%s': '%s'\n", request.headers[i].key, request.headers[i].value);
+    }
 }
 
 int main(void)
@@ -24,7 +27,7 @@ int main(void)
         return -1;  // this will return an error code
     }
 
-    if ((listen(sfd, MAX_CONNECTIONS)) < 0)
+    if ((listen(sfd, max_connections)) < 0)
     {
         term(sfd, "listen failure");
         return -1;
@@ -67,6 +70,7 @@ int main(void)
     }
 
     // end
+    free(buffer);
     shutdown(sfd, SHUT_RDWR);
     return 0;
 }
