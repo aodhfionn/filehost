@@ -3,7 +3,7 @@
 
 // function declaration
 address_t create_address();
-int create_server_socket(address_t*);
+int  create_server_socket(address_t*);
 void term(int, const char*);
 
 void print_request(http_request_t request)
@@ -38,7 +38,7 @@ int main(void)
     char buffer[1024] = { 0 };
     int client;
 
-    const char* message = "HTTP/1.0 200 OK\r\nServer: C10K\r\nConnection: Closed\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>Hello World</title></head><body><h1>Test Response</h1></body></html>";
+    // const char* message = "HTTP/1.0 200 OK\r\nServer: C10K\r\nConnection: Closed\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE html><html><head><title>Hello World</title></head><body><h1>Test Response</h1></body></html>";
 
 
     // hashmap_t* map = hashmap_create();
@@ -58,7 +58,7 @@ int main(void)
         }
 
         int bytes_read = recv(client, &buffer, 1024, 0);
-        int bytes_sent = send(client, message, strlen(message), 0);
+        // int bytes_sent = send(client, message, strlen(message), 0);
 
         http_request_t request = http_parse_request(buffer);
 

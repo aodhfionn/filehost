@@ -7,15 +7,16 @@
 #include <string.h>
 
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <arpa/inet.h>
-
-#include "http.h"
 
 struct pair
 {
-    const char* key;
+    void* key;
     void* value;
 };
+
+#include "http.h"
 
 // new address_t type in order to be able to pack extra metadata with sockaddr_in
 typedef struct
